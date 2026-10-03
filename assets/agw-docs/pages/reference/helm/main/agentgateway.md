@@ -4,8 +4,8 @@
 | Key | Type | Description |
 |-----|------|-------------|
 | affinity | object | Set affinity rules for pod scheduling, such as 'nodeAffinity:'.<br/><br/>The default value is `{}`. |
-| agentgatewayModels | object | Configure the experimental AgentgatewayModel API.<br/><br/>The default value is `{"enabled":false}`. |
-| agentgatewayModels.enabled | bool | Enable AgentgatewayModel support in the agentgateway controller.<br/><br/>The default value is `false`. |
+| agentgatewayModels | object | Configure the AgentgatewayModel API.<br/><br/>The default value is `{"enabled":true}`. |
+| agentgatewayModels.enabled | bool | Enable AgentgatewayModel support in the agentgateway controller.<br/><br/>The default value is `true`. |
 | commonLabels | object | Additional labels to add to all resources created by the Helm chart.<br/><br/>The default value is `{}`. |
 | controller | object | Configure the agentgateway control plane deployment.<br/><br/>The default value is `{"extraContainers":[],"extraEnv":{},"extraVolumeMounts":[],"extraVolumes":[],"horizontalPodAutoscaler":{},"image":{"pullPolicy":"","registry":"","repository":"controller","tag":""},"logLevel":"info","podDisruptionBudget":{},"priorityClassName":"","replicaCount":1,"revisionHistoryLimit":null,"service":{"allocateLoadBalancerNodePorts":null,"annotations":{},"clusterIP":"","clusterIPs":[],"enabled":true,"externalIPs":[],"externalName":"","externalTrafficPolicy":"","extraLabels":{},"healthCheckNodePort":null,"internalTrafficPolicy":"","ipFamilies":[],"ipFamilyPolicy":"","loadBalancerClass":"","loadBalancerIP":"","loadBalancerSourceRanges":[],"ports":{"agwGrpc":9978,"health":9093,"metrics":9092},"publishNotReadyAddresses":false,"sessionAffinity":"","sessionAffinityConfig":{},"trafficDistribution":"","type":"ClusterIP"},"strategy":{},"verticalPodAutoscaler":{},"xds":{"mode":"tls"}}`. |
 | controller.extraContainers | list | Add extra sidecar containers to the controller pod.<br/><br/>The default value is `[]`. |
@@ -72,8 +72,9 @@
 | istio.namespace | string | Namespace where the Istio control plane the controller integrates with is installed.    Defaults to "istio-system".<br/><br/>The default value is `""`. |
 | istio.network | string | Istio network for mesh-integrated gateways.<br/><br/>The default value is `""`. |
 | istio.revision | string | Revision of the Istio control plane the controller integrates with.   If unset, the default revision is used.<br/><br/>The default value is `""`. |
-| monitoring | object | Configure Prometheus and Grafana monitoring resources.<br/><br/>The default value is `{"enabled":false,"grafanaDashboard":{"enabled":true,"labels":{"grafana_dashboard":"1"}},"proxy":{"gatewayClassNames":["agentgateway"],"namespaceSelector":{},"podMonitor":{"enabled":true,"podTargetLabels":["gateway.networking.k8s.io/gateway-name"]}},"serviceMonitor":{"enabled":true,"extraLabels":{},"interval":"15s"}}`. |
+| monitoring | object | Configure Prometheus and Grafana monitoring resources.<br/><br/>The default value is `{"enabled":false,"grafanaDashboard":{"annotations":{},"enabled":true,"labels":{"grafana_dashboard":"1"}},"proxy":{"gatewayClassNames":["agentgateway"],"namespaceSelector":{},"podMonitor":{"enabled":true,"podTargetLabels":["gateway.networking.k8s.io/gateway-name"]}},"serviceMonitor":{"enabled":true,"extraLabels":{},"interval":"15s"}}`. |
 | monitoring.enabled | bool | Create monitoring resources (ServiceMonitors and Grafana dashboard ConfigMap). Requires the Prometheus Operator CRDs to be installed in the cluster.<br/><br/>The default value is `false`. |
+| monitoring.grafanaDashboard.annotations | object | Annotations on the dashboard ConfigMap. Provisioners that place a dashboard    by display name read the folder, and sometimes the organization, from an    annotation rather than a label, because a label value admits no spaces    (e.g. grafana_folder: "Platform gateways").<br/><br/>The default value is `{}`. |
 | monitoring.grafanaDashboard.enabled | bool | Create the Grafana dashboard ConfigMap.<br/><br/>The default value is `true`. |
 | monitoring.grafanaDashboard.labels | object | Labels that the Grafana sidecar uses to discover dashboards.<br/><br/>The default value is `{"grafana_dashboard":"1"}`. |
 | monitoring.proxy.gatewayClassNames | list | GatewayClass names whose proxy pods are selected by the proxy PodMonitor.<br/><br/>The default value is `["agentgateway"]`. |
@@ -92,7 +93,7 @@
 | proxy.image.registry | string | Set the default image registry. Set to override the global value.<br/><br/>The default value is `""`. |
 | proxy.image.repository | string | Set the default image repository.<br/><br/>The default value is `"agentgateway"`. |
 | proxy.image.tag | string | Set the default image tag.<br/><br/>The default value is `""`. |
-| rbac | object | Configure the RBAC permissions created for the controller.<br/><br/>The default value is `{"gatewayNamespaces":[]}`. |
+| rbac | object | Configure the RBAC permissions created for the controller.<br/><br/>The default value is `{"create":true,"gatewayNamespaces":[]}`. |
 | rbac.gatewayNamespaces | list | Restrict namespaced write permissions to these namespaces. The namespaces must already exist. An empty list preserves the default cluster-wide write access. Cluster-wide read permissions and writes to cluster-scoped resources are unaffected. Restricting this list means only Gateways in these namespaces can be used.<br/><br/>The default value is `[]`. |
 | resources | object | Configure resource requests and limits for the container, such as 'limits.cpu: 100m' or 'requests.memory: 128Mi'.<br/><br/>The default value is `{"requests":{"cpu":"100m","memory":"128Mi"}}`. |
 | securityContext | object | Set the container-level security context, such as 'runAsNonRoot: true'.<br/><br/>The default value is `{}`. |
